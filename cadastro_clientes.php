@@ -104,7 +104,7 @@ if(isset($_SESSION['ID_Perfil'] )){
                         </div>
 
                         <div class="text-center" style='margin:0 auto'>                     
-                            <button type="submit" name='cadastrar' id='cadastrar' class="btn btn-primary">Cadastrar</button>
+                            <button type="submit" name='cadastrar' id='cadastrar' class="btn btn-success">Cadastrar</button>
                         </div>
                     </div>
                 </form>

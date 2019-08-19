@@ -46,8 +46,8 @@ a:focus {
 
 .line {
     width: 100%;
-    height: 1px;
-    border-bottom: 1px dashed #ddd;
+    height: 2px;
+    border-bottom: 1px dashed #a7adb3;
     margin: 20px 0;
 }
 
@@ -193,3 +193,45 @@ a.article:hover {
         display: none;
     }
 }
+
+/*-------------------------ITEM -------------------- */
+
+#ContainerPesquisa{
+    display:none;
+    border:1px solid gainsboro;
+    background:aliceblue
+}
+
+.faqDisplay dd {
+    display: none;
+    }
+.faqDisplay2 dd2 {
+    display: none;
+}
+
+#colunaPai{
+    cursor:pointer;
+}
+
+.buttonItem {
+    background-color: white;
+    border: none;
+    background-repeat: no-repeat;
+    color:white;
+    cursor: pointer;
+    height: 26px;
+    float: right;
+    width: 24px;
+    margin: 5px;
+}
+
+#buttonAdd{
+    background-image:url("../public/img/add.ico");
+
+}
+
+#buttonVer{
+    background-image:url("../public/img/item.ico");
+
+}
+

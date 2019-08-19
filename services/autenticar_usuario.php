@@ -43,7 +43,7 @@ print_r($senha);
 header('Location: ../autenticacao_usuario.php?cod=' . $cod . ' &status=' . $senha . ' ');
 
 if(empty($registro)){
-    header('Location: ../autenticacao_usuario.php?error=2 ');
+    header('Location: ../autenticacao_usuario.php?cod=' . $cod . ' &error=2 ');
 }
 
 

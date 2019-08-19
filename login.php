@@ -29,41 +29,59 @@ $usuario = new usuario();
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
 </head>
+
+<style>
+#BtnExterno:hover{
+	color: #fff;
+    background-color: #007bff!important;
+    border-color: #007bff!important;
+
+}
+
+#BtnInterno:hover{
+	color: white!important;
+
+	background-color: black!important;
+    border-color: black!important;
+}
+
+</style>
 <body>
 	
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
-				<div class="login100-pic js-tilt" data-tilt>
-					<img src="img/logo_fres.jpg" alt="IMG">
-				</div>
-
-				<form method="POST" class="login100-form validate-form" >
-				
+				<div class="container text-center">
+						
 				<?php
 					if(!empty($_GET['error'])){
 						if($_GET['error'] == 1){
 							?>
 							
-							<div class="alert alert-danger alert-dismissible fade show" role="alert" style=padding:10px;font-size:14px;>
-								EMAIL OU SENHA ESTÃO INCORRETO!
+							<div class="alert alert-danger alert-dismissible fade show" role="alert" style=padding:10px;font-size:16px;>
+								Email ou senha estão incorretos!
 							</div>
 							<?php
 						}
-					}
-
-					if(!empty($_GET['error'])){
+					
 						if($_GET['error'] == 2){
 							?>
-							<div class="alert alert-danger alert-dismissible fade show" role="alert" style=padding:10px;font-size:14px;>
-								Conta desativado, entre em contato com o departamento de TI!
+							<div class="alert alert-danger alert-dismissible fade show" role="alert" style=padding:10px;font-size:17px;>
+								Conta desativada, entre em contato com o departamento de TI!
 							</div>
 							<?php
 						}
 					}
                 ?>
-					<span class="login100-form-title">
-						Login
+				</div>
+				<div class="login100-pic js-tilt" data-tilt>
+					<img src="img/logo_fres.jpg" alt="IMG">
+				</div>
+				
+				<form method="POST" class="login100-form validate-form" >
+			
+				<span class="login100-form-title">
+						Portal Externo
 					</span>
 
 					<div class="wrap-input100 validate-input" data-validate = "Necessário um e-mail valido: ex@ex.com">
@@ -111,7 +129,6 @@ $usuario = new usuario();
 							$usuario->login();
 							$usuario->getID();
 							
-
 						}
 					
 					
@@ -136,6 +153,12 @@ $usuario = new usuario();
 		$('.js-tilt').tilt({
 			scale: 1.1
 		})
+	</script>
+	<script>
+        $('#BtnInterno').on('click', function () {
+			window.location = "http://192.168.1.6:8089/PortalInterno/login.php";
+
+		});
 	</script>
 <!--===============================================================================================-->
 	<script src="js/main.js"></script>

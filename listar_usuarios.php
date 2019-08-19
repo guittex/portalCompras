@@ -64,7 +64,7 @@ if(isset($_SESSION['ID_Perfil'] )){
 
                     <input type="text" name="nome" placeholder="Digite o nome para pesquisar" style="padding: 0%; width: 33%;height: 37px;border-radius: 5px;border: 1px solid #ced4da;">
                     <input type="text" name="email" placeholder="Digite o email para pesquisar" style="padding: 0%; width: 33%;height: 37px;border-radius: 5px;border: 1px solid #ced4da;">
-                    <button name="SendPesqUser" id="SendPesqUser" class="btn btn-xs btn-dark"  value="Pesquisar"> Pesquisar</button>				 
+                    <button name="SendPesqUser" id="SendPesqUser" class="btn btn-xs btn-primary"  value="Pesquisar"> Pesquisar</button>				 
                 </form>
             </div>
         </div>

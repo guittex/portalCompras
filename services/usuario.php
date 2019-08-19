@@ -1,6 +1,6 @@
 <?php
 include_once("sql_conexao.php"); 
-
+include_once("suporteController.php");
 
 
     class usuario extends conexao{ 
@@ -33,19 +33,26 @@ include_once("sql_conexao.php");
             //Remove os espaçps
             $this->DE_Senha = trim($this->DE_Senha);
 
-            $this->sql = "SELECT * FROM dbo.PT_Usuario WHERE DE_Email = '$this->DE_Email' and DE_Senha = '$this->DE_Senha' and IS_Ativo = 1 "; 
+            $this->sql = "SELECT * FROM dbo.PT_Usuario WHERE DE_Email = '$this->DE_Email' and DE_Senha = '$this->DE_Senha' "; 
             //Query da consulta sql            
             $this->query = sqlsrv_query($this->con, $this->sql);
             //Array da query
             $this->registro = sqlsrv_fetch_array($this->query);  
+            
+
 
             if($this->registro['DE_Senha'] === 'senha@123'){
                 header('Location: alterar_senha.php?id=' . base64_encode($this->registro['ID_Usuario']) . ' ');exit;
-            }    
+            }               
             
-            
+            //var_dump($this->registro['IS_Ativo'], $this->DE_Email, $this->DE_Senha);
+
             //Verificar se a query tem uma linha afetada
-            if (sqlsrv_has_rows($this->query) >= 1){   
+            if($this->registro['IS_Ativo'] == 0 and $this->registro['DE_Email'] == $this->DE_Email and $this->registro['DE_Senha'] == $this->DE_Senha){
+                header('Location: login.php?error=2 ');
+                                
+            }    
+            elseif (sqlsrv_has_rows($this->query) >= 1){   
 
                 if (!isset($_SESSION)) {
                     session_start();
@@ -56,13 +63,17 @@ include_once("sql_conexao.php");
                     $_SESSION['IS_Ativo'] = $this->registro['IS_Ativo'];
                     $_SESSION['email'] = $this->registro['DE_Email'];
                     $_SESSION["timer_portal"]= time() + 600;   
-                    if($this->registro['ID_Perfil'] == 4){
-                        header('Location: listar_usuarios.php');exit;        
+                    if($this->registro['ID_Perfil'] == 4 or  $this->registro['ID_Perfil'] == 1 ){
+                        header('Location: listar_usuarios.php');exit;    
+                            
                     }                 
                     header('Location: index.php');exit;                                    
                 }
-            }else {
-                header('Location: login.php?error=1');
+            }
+            else{
+                header('Location: login.php?error=1 '); 
+                
+
             }
 
             
@@ -115,7 +126,11 @@ include_once("sql_conexao.php");
                         }     
                         echo '</td>';
                         echo "<td>";
-                        echo "<button type=button class='btn btn-danger' data-toggle='modal' data-target=#oi".$this->registro_orcamento['ID_Cotacao'].">Não</button>";
+                        if($this->registro_orcamento['DE_SolicitacaoStatus'] == 5){
+                            echo "<span style='color:red'>Produto Declinado</span>";
+                        }else{                            
+                            echo "<button type=button class='btn btn-danger' data-toggle='modal' data-target=#oi".$this->registro_orcamento['ID_Cotacao'].">Não</button>";
+                        }
                         /*echo "<select class=form-control data-toggle='modal' data-target=#oi".$this->registro_orcamento['ID_Cotacao'].">";                
 
                             echo "<option value='declinado_nao'>Não</option>";
@@ -206,15 +221,22 @@ include_once("sql_conexao.php");
 
                             echo '</td>';
                             */
-                            echo "<td><button type=button class='btn btn-success' data-toggle=modal data-target='#". $this->registro_orcamento['ID_Cotacao']."'>Cotar</button></td>";         
+                            if($this->registro_orcamento['DE_SolicitacaoStatus'] == 5){
+                                echo '<td></td>';
+                            }elseif($this->registro_orcamento['DE_SolicitacaoStatus'] == 2){
+                                echo "<td><button type=button class='btn btn-success' data-toggle=modal data-target='#Ver". $this->registro_orcamento['ID_Cotacao']."'>Ver</button></td>";         
 
+                            }
+                            else{
+                                echo "<td><button type=button class='btn btn-success' data-toggle=modal data-target='#Cotar". $this->registro_orcamento['ID_Cotacao']."'>Cotar</button></td>";         
+                            }
                             
                             echo '</tr>';   
                     echo "</tr>";
-
-                    //Modal cotação
-                    echo "<div class='modal fade' id=".$this->registro_orcamento['ID_Cotacao']." tabindex='-1' role='dialog' aria-labelledby='myModalLabel'>";
-                    echo    '<div class="modal-dialog" role="document">';
+                    
+                    //Modal cotação feita
+                   /* echo "<div class='modal fade bd-example-modal-lg' id=Ver".$this->registro_orcamento['ID_Cotacao']." tabindex='-1' role='dialog' aria-labelledby='myModalLabel'>";
+                    echo    '<div class="modal-dialog modal-lg" role="document">';
                     echo        '<form action=services/cotacao.php type=POST>';
                     echo         '<div class="modal-content br-15">';
                     echo            '<div class="modal-header">';
@@ -222,6 +244,81 @@ include_once("sql_conexao.php");
                     echo               '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
                     echo            '</div>';
                     echo            '<div class="modal-body">';
+                    echo                    "<input type=hidden name='idFornecedor' value=".$this->ID_VenFor." >";
+                    echo                '<input type=hidden name=ID_Cotacao value='.$this->registro_orcamento['ID_Cotacao'].'>';
+                    echo                '<p class="m-b-10"><b style="font-weight: bold">Descrição: </b> ';
+                    echo                    '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_Descricao'].' reais </span>';
+                    echo                '</p>';
+                    echo                '<p class="m-b-10"><b style="font-weight: bold">Quantidade:</b> ';
+                    echo                     '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_Qtde'].' reais </span>';
+                    echo                '</p>';
+                    echo                '<div class="form-row">';
+                    echo                    '<div class="col">';
+                    echo                        '<p class="m-b-10" style="font-weight:bold">Preço: ';
+                    echo                            '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_Preco'].' reais </span>';
+                    echo                        '</p>';
+                    echo                     '</div>';
+                    echo                      '<div class="col">';
+                    echo                         '<p class="m-b-10" style="font-weight:bold">Entrega dias: ';
+                    echo                            '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_EntregaDias'].' dias </span>';
+                    echo                          '</p>';
+                    echo                       '</div>';
+                    echo                 '</div>';
+                    echo                '<div class="form-row">';
+                    echo                    '<div class="col">';
+                    echo                        '<p class="m-b-10" style="font-weight:bold">IPI: ';
+                    echo                            '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_Ipi'].'% </span>';
+                    echo                        '</p>';
+                    echo                     '</div>';
+                    echo                      '<div class="col">';
+                    echo                         '<p class="m-b-10" style="font-weight:bold">ICMS/ISS: ';
+                    echo                            '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_ICMS'].'% </span>';
+                    echo                         '</p>';
+                    echo                       '</div>';
+                    echo                 '</div>';
+                    echo                '<div class="input-group date form-row"  id="datetimepicker1">';
+                    echo                        '<div class="col">';
+                    echo                            '<p class="m-b-10" style="font-weight:bold">Validade Cotação: ';
+                    echo                            '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DT_DataValidade']->format('d-m-Y').' </span>';
+                    echo                            '</p>';                                                    
+                    echo                        '</div>';
+                    echo                    '</div>';
+                    echo                '<div class="form-row">';
+                    echo                    '<div class="col">';
+                    echo                        '<p class="m-b-10" style="font-weight:bold">Informações ao comprador: ';
+                    echo                            '<span style="color:black;font-weight:normal">'.$this->registro_orcamento['DE_InfComprador'].' </span>';
+                    echo                        '</p>';
+                    echo                     '</div>';
+                    echo                '</div>';
+                    echo                '<div class="form-row">';
+                    echo                    '<div class="col">';
+                    echo                        '<p class="m-b-10" style="font-weight:bold">Condição de Pagamento:</p>';
+                    echo                        "<select name=condPagamento class=form-control>";
+                    echo                            "<option selected>".$this->registro_orcamento['DE_FormaPagamento']."</option>";
+                    echo                        "</select>" ;
+                    echo                    '</div>';
+                    echo                '</div>';
+                    echo            '<div class="modal-footer">';
+                    echo                '<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>';
+                    echo            '</div> '; 
+                    echo            '</div>';
+                    echo         '</div>';
+                    echo      '</form>';
+                    echo    '</div>';
+                    echo '</div>';*/
+
+                    //Modal cotação não cotada
+                    echo "<div class='modal fade bd-example-modal-lg' id=Cotar".$this->registro_orcamento['ID_Cotacao']." tabindex='-1' role='dialog' aria-labelledby='myModalLabel'>";
+                    echo    '<div class="modal-dialog modal-lg" role="document">';
+                    echo        '<form action=services/cotacao.php type=POST>';
+                    echo         '<div class="modal-content br-15">';
+                    echo            '<div class="modal-header">';
+                    echo                '<h4 class="modal-title" id="myModalLabel" style="text-align:center!important;">ID:'.$this->registro_orcamento['ID_Cotacao'].'</h4>';
+                    echo               '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+                    echo            '</div>';
+                    echo            '<div class="modal-body">';
+                    echo                    "<input type=hidden name='idFornecedor' value=".$this->ID_VenFor." >";
+                    echo                '<input type=hidden name=ID_Cotacao value='.$this->registro_orcamento['ID_Cotacao'].'>';
                     echo                '<p class="m-b-10"><b style="font-weight: bold">Descrição:</b> '.$this->registro_orcamento['DE_Descricao'].'</p>';
                     echo                '<p class="m-b-10"><b style="font-weight: bold">Quantidade:</b> '.$this->registro_orcamento['DE_Qtde'].'</p>';
                     echo                '<div class="form-row">';
@@ -237,17 +334,17 @@ include_once("sql_conexao.php");
                     echo                '<div class="form-row">';
                     echo                    '<div class="col">';
                     echo                        '<p class="m-b-10" style="font-weight:bold">IPI</p>';
-                    echo                        '<input type="text" name=ipi class="form-control cotacaoInput" placeholder="Digite o IPI">';
+                    echo                        '<input type="text" name=ipi class="form-control cotacaoInput" placeholder="Digite o IPI" >';
                     echo                     '</div>';
                     echo                      '<div class="col">';
                     echo                         '<p class="m-b-10" style="font-weight:bold">ICMS/ISS</p>';
-                    echo                         '<input type="text" name=icms class="form-control cotacaoInput" placeholder="Digite o ICMS/ISS">';
+                    echo                         '<input type="text" name=icms class="form-control cotacaoInput" placeholder="Digite o ICMS/ISS" >';
                     echo                       '</div>';
                     echo                 '</div>';
                     echo                '<div class="input-group date form-row"  id="datetimepicker1">';
                     echo                        '<div class="col">';
                     echo                            '<p class="m-b-10" style="font-weight:bold">Validade Cotação</p>';
-                    echo                            '<input type="date" name="dataValidade" class="form-control cotacaoInput" placeholder="Validade da Cotação"> ';
+                    echo                            '<input type="date" name="dataValidade" class="form-control cotacaoInput" placeholder="Validade da Cotação" required> ';
                     echo                        '</div>';
                     echo                    '</div>';
                     echo                '<div class="form-row">';
@@ -326,10 +423,11 @@ include_once("sql_conexao.php");
                     echo                    '</button>';
                     echo            '</div>';
                     echo            '<div class="modal-body">';
+                    echo                    "<input type=hidden name='codPost' value='10'>";
                     echo                    "<input type=hidden name='idCotacao' value=".$this->registro_orcamento['ID_Cotacao']." >";
                     echo                    "<input type=hidden name='idFornecedor' value=".$this->ID_VenFor." >";
                     echo                    '<label for="exampleInputEmail1">Por que está Declinando?</label>';
-                    echo                    '<input type="text" class="form-control" name="declinadoTexto" id="declinadoTexto" value="Não Comercializamos este material" required>';
+                    echo                    '<input type="text" class="form-control text-black" name="declinadoTexto" id="declinadoTexto" value="Não Comercializamos este material" required>';
                     echo            '</div>';
                     echo            '<div class="modal-footer">';
                     echo                '<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>';
@@ -364,7 +462,7 @@ include_once("sql_conexao.php");
             
             
             if(!empty($ID_Solicitacao)){
-                $this->sql_orcamento = "SELECT * from dbo.PT_Cotacao WHERE ID_Cotacao = '$ID_Solicitacao' AND DE_SolicitacaoStatus = 1 and ID_Fornecedor =  $this->ID_VenFor "; 
+                $this->sql_orcamento = "SELECT * from dbo.PT_Cotacao WHERE ID_Cotacao = '$ID_Solicitacao' and ID_Fornecedor =  $this->ID_VenFor "; 
 
             }elseif(!empty($DE_Descricao)){
                 $this->sql_orcamento = "SELECT * from dbo.PT_Cotacao WHERE DE_Descricao like '%$DE_Descricao%' AND DE_SolicitacaoStatus = 1 and ID_Fornecedor =  $this->ID_VenFor  "; 
@@ -469,10 +567,10 @@ include_once("sql_conexao.php");
                 
                 echo "<td>";
                 if($_SESSION['ID_Perfil'] == 1){
-                    echo "<button type=button class='btn btn-xs btn-dark' '> <a href=editar_cliente.php?ID_Usuario=" . $this->registro_usuario['ID_Usuario'] . "  style='color: inherit;'</a> Editar</button>";
+                    echo "<button type=button class='btn btn-xs btn-warning' '> <a href=editar_cliente.php?ID_Usuario=" . $this->registro_usuario['ID_Usuario'] . "  style='color: inherit;'</a> Editar</button>";
 
                 }else{
-                    echo "<a href=services/envia_senha.php?ID=" . $this->registro_usuario['ID_Usuario'] .  " ><button class='btn btn-xs btn-primary'>Enviar Senha</button> </a> ";
+                    echo "<a href=services/envia_senha.php?ID=" . $this->registro_usuario['ID_Usuario'] .  " ><button class='btn btn-xs btn-success'>Enviar Senha</button> </a> ";
 
                 }
                 echo "</td>";
@@ -520,7 +618,7 @@ include_once("sql_conexao.php");
                 $msg = "    
                     Parabens! Voce agora tem acesso ao portal de Compras
 
-                    Para ser feito o primeiro acesso será necessário inserir uma nova senha após o Login
+                    Para ser feito o primeiro acesso sera necessario inserir uma nova senha apos o Login
 
                     Seu e-mail = $this->DE_Email
                     Sua senha = $this->DE_Senha
@@ -623,10 +721,12 @@ include_once("sql_conexao.php");
         }
 
         public function msg_suporte(){
+            $suporte = new SuporteController();
             $email = $_POST['email'];
             $assunto = $_POST['assunto_mensagem'];
             $mensagem = $_POST['corpo_mensagem'];
-
+            $idFornecedor = $_POST['idFornecedor'];
+            
             //print_r($assunto);
             //print_r($mensagem);
             //print_r($email);
@@ -635,7 +735,13 @@ include_once("sql_conexao.php");
             $msg .= " Para responder esta mensagem envie o e-mail para este destinatario= " . $email ;
         
             mail('sistema@fresadorasantana.com.br',$assunto,$msg, "From: sistema@fresadorasantana.com.br");
-            header('Location: suporte_msg.php?status=1&mail= ' . base64_encode($email) . ' ');
+
+            $adicionarChamado = $suporte->AdicionarChamado($idFornecedor,$assunto,$mensagem);
+
+            if($adicionarChamado == TRUE);{
+                header('Location: suporte.php?idFornecedor='.base64_encode($idFornecedor).'&status=1&mail= ' . base64_encode($email) . ' ');
+            }
+
 
             
 
@@ -679,7 +785,7 @@ include_once("sql_conexao.php");
 }
 
 
-if($_POST){    
+if(!empty($_POST['cod_post'])){    
 
     $cod_post = $_POST['cod_post'];    
     $usuario = new usuario(); 

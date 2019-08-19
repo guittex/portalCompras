@@ -27,7 +27,7 @@
 	<body>
 		<?php
 		// Definimos o nome do arquivo que será exportado
-		$arquivo = 'registro_excel.xls';
+		$arquivo = 'Relatorio.xls';
 		// Criamos uma tabela HTML com o formato da planilha
 		$html = '';
 		$html .= '<table border="1">';

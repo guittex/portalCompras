@@ -36,8 +36,8 @@
         $html .= '<td>'. $array['DE_Qtde'] . "</td>";  
         $html .= '<td>'. $array['DE_Preco'] . "</td>";  
         $html .= '<td>'. $array['DE_EntregaDias'] . "</td>";
+        $html .= '<td>'. $array['DE_Ipi'] . "</td>";
         $html .= '<td>'. $array['DE_ICMS'] . "</td>";        
-        $html .= '<td>'. $array['DE_Ipi'] . "</td>";        
         $html .= '<td>'. $array['DE_NCM'] . "</td>";
         $html .= '<td>'. $array['DT_DataInserido']->format('d/m/Y H:i:s') . "</td>";      
     

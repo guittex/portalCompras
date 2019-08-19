@@ -4,6 +4,7 @@ include_once("services/usuario.php");
 $usuario = new usuario();
 $id = $_SESSION['ID'];
 $email = $_SESSION['email'];
+$idFornecedor = $_SESSION['ID_VenFor'];
 $perfil = $_SESSION['ID_Perfil'];
 ?>
 
@@ -12,6 +13,8 @@ $perfil = $_SESSION['ID_Perfil'];
     <ul class="list-unstyled components">      
         <li>
             <?php if($perfil != 4 ){ ?>
+            <!-------------------------------ORÇAMENTOS ----------------------------------------------------------->
+
             <a href="index.php" ><i class="fas fa-shopping-cart" aria-hidden="true" style="margin-right:10px;"></i>Orçamentos</a>
             <!--<ul class="collapse list-unstyled" id="vendas">
                 <li>
@@ -24,6 +27,8 @@ $perfil = $_SESSION['ID_Perfil'];
                     <a href="#">Exemplo 3</a>
                 </li>
             </ul>-->
+            <!-------------------------------RELATORIO ----------------------------------------------------------->
+
             <a href="#relatorio" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> <i class="fas fa-sticky-note" aria-hidden="true" style="margin-right:10px;"></i>Relatório</a>
             <ul class="collapse list-unstyled" id="relatorio">
                 <li>
@@ -35,6 +40,7 @@ $perfil = $_SESSION['ID_Perfil'];
                 
             </ul>
             <?php } ?>
+            <!-------------------------------MINHA CONTA ----------------------------------------------------------->
 
             <a href="#myconta" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> <i class="fas fa-user-cog" aria-hidden="true" style="margin-right:10px;"></i>Minha conta</a>
             <ul class="collapse list-unstyled" id="myconta">
@@ -45,16 +51,18 @@ $perfil = $_SESSION['ID_Perfil'];
                 <li>
                     <a href="mailto:example@email.com" >Enviar e-mail</a>
                 </li>
-                <li>
-                    <a href='suporte_msg.php?mail=<?php echo base64_encode($email)  ?>'>Suporte</a>
+                <!--<li>
+                    <a href='suporte.php?idFornecedor=<?php echo base64_encode($idFornecedor) ?>&mail=<?php echo base64_encode($email)  ?>'>Suporte</a>
                     
-                </li>
+                </li>-->
                 
             </ul>
 
             <?php
                 if($perfil == 1 or $perfil == 4){
             ?>
+            <!-------------------------------ADMINISTRAÇÃO ----------------------------------------------------------->
+
                 <a href="#admin" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> <i class="fas fa-laptop" aria-hidden="true" style="margin-right:10px;"></i>Administração</a>
                 <ul class="collapse list-unstyled" id="admin">
                     <li>
@@ -67,12 +75,28 @@ $perfil = $_SESSION['ID_Perfil'];
                     
                 </ul>
 
-            <?php } ?>       
+            <?php } ?>    
 
             
-            
+            <!-------------------------------SUPORTE ----------------------------------------------------------->
+            <?php
+                if($perfil == 1){                    
+            ?>
+                <a href='suporte_adm.php?idFuncionario=<?php echo ($id) ?>' ><i class="fas fa-toolbox" aria-hidden="true" style="margin-right:13px;"></i>Suporte</a>
+            <?php 
+                }else{
+            ?>
+                <a href='suporte.php?idFornecedor=<?php echo base64_encode($idFornecedor) ?>&mail=<?php echo base64_encode($email)  ?>' ><i class="fas fa-toolbox" aria-hidden="true" style="margin-right:13px;"></i>Suporte</a>
+            <?php
+                }
+            ?>
+            <!-------------------------------FeedBack ----------------------------------------------------------->
+            <a href='feedback.php?idFornecedor=<?php echo base64_encode($idFornecedor) ?>' ><i class="fas fa-comment-dots" aria-hidden="true" style="margin-right:13px;"></i>FeedBack</a>
+
         </li>       
     </ul>
+
+
 
     <!--- <ul class="list-unstyled CTAs">
         <li>

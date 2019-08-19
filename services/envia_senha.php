@@ -22,11 +22,14 @@ $email = $registro['DE_Email'];
 header('Location: ../listar_usuarios.php?status=1');
 
 $msg = 
-"Olá, identificamos que foi solicitado uma recuperação de senha.
+"Ola, identificamos que foi solicitado uma recuperacao de senha.
 
-Copie e cole esse código, " . $id . 98745 . " , neste link para confirmar a autencidade: http://localhost:8089/portal/portal_php/portal/autenticacao_usuario.php?cod=" .base64_encode($id).".
+Copie e cole esse codigo, " . $id . 98745 . " , neste link para confirmar a autencidade: http://localhost:8089/portal/portal_php/portal/autenticacao_usuario.php?cod=" .base64_encode($id).".
 
-Caso não tenha solicitado, acesse sua conta e altere sua senha.";
+Caso nao tenha solicitado, acesse sua conta e altere sua senha.";
+
+mail($email,'Identificacao de Senha',$msg, "From: sistema@fresadorasantana.com.br");
+
 
 //Para retornar para tela de login clique aqui: http://localhost:8089/portal/portal_php/portal/login.php.
 

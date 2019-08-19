@@ -75,6 +75,7 @@ if ( isset( $_SESSION["timer_portal"] ) ) {
 ?>
 
     <div class='container w-50' id="content">
+    
 
         <h1 class="text-center">Meus Dados</h1>
         <div class="line"></div>
@@ -127,8 +128,12 @@ if ( isset( $_SESSION["timer_portal"] ) ) {
             ?>
 
         </div>
+        
     </div>
+    
 </div>
+
+
 
 
 

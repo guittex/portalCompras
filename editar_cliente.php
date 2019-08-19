@@ -186,9 +186,9 @@ if ( isset( $_SESSION["timer_portal"] ) ) {
                     </div>
 
                     </div>                          
-                    <div class="text-center">                     
-                        <input type="submit" class="btn btn-primary w-25" name='editar' id='editar' value="Editar">
-                        <a href='listar_usuarios.php'><input class="btn btn-dark w-25" value="Voltar"></a>
+                    <div class="text-center">           
+                        <a href='listar_usuarios.php'><input class="btn btn-danger w-25" value="Voltar"></a>          
+                        <input type="submit" class="btn btn-success w-25" name='editar' id='editar' value="Editar">
                     </div>
 
                 </div>

@@ -353,6 +353,15 @@ iframe {
   color:  white;
 }
 
+.login1-form-btn:hover {
+  background: #277885;
+  color:  white;
+}
+
+.login2-form-btn:hover {
+  background: #277885;
+  color:  white;
+}
 
 
 /*------------------------------------------------------------------

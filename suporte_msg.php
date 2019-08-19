@@ -7,23 +7,19 @@ $usuario = new usuario();
 $sql = new conexao();
 
 $email = base64_decode($_GET['mail']);
+
+$idFornecedor = base64_decode($_GET['idFornecedor']);
+
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <?php
-
     //Cabeçalho
     include_once("head.php");
 
     //Menu
     include_once("header.php");
-
-?>	
-	
+?>		
 <style>
 
 </style>
@@ -65,30 +61,29 @@ if ( isset( $_SESSION["timer_portal"] ) ) {
         <div class="line"></div>
         <?php
         if(!empty($_GET['status'])){
-            if($_GET['status'] == 1){
-                
-                ?>
-                
-                <div id='div_fechar' class="alert alert-success alert-dismissible fade show text-center" role="alert" style=padding:10px;font-size:14px;>
-                
+            if($_GET['status'] == 1){                
+                ?>                
+                <div id='div_fechar' class="alert alert-success alert-dismissible fade show text-center" role="alert" style=padding:10px;font-size:14px;>                
                     Enviado com sucesso!
-
                     <div>
                         <button id='botao_fechar' type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>   
                     </div>
-
                 </div>
                 <?php
             }
+
         }
         ?>
 
+        
             <form method="POST">
                 <div class="form-row">
                     
                     <input type="hidden" name="cod_post" value="7">
+
+                    <input type="hidden" id="idFornecedor" name="idFornecedor" value="<?php echo $idFornecedor ?>">
 
                     <input type="hidden" name="email" value="<?php echo $email;?>">
                     
@@ -109,6 +104,7 @@ if ( isset( $_SESSION["timer_portal"] ) ) {
                 
             <?php 
                 $enviar = filter_input(INPUT_POST, 'enviar', FILTER_SANITIZE_STRING);
+
                 if ($enviar){
                     $usuario->msg_suporte();
                 }
